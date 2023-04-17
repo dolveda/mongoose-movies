@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<%- include('../partials/head') %>
+<body></body>
+
+<%- include('../partials/header') %>
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Release Year</th>
+            <th>Rating</th>
+            <th>Cast</th>
+            <th>Now Showing</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% movies.forEach(m => { %>
+            <tr>
+                <td>
+                    <%= m.title %>
+                </td>
+                <td>
+                    <%= m.releaseYear %>
+                </td>
+                <td>
+                    <%= m.mpaaRating %>
+                </td>
+                <td>
+                    <%= m.cast.join(', ') %>
+                </td>
+                <td>
+                    <%= m.nowShowing ? 'Yes' : 'Nope' %>
+                </td>
+                <td>
+                    <a href="/movies/<%= m._id %>">Details</a>
+                </td>
+            </tr>
+       <% }) %>
+    </tbody>
+</table>
+
+<%- include('../partials/footer') %>
+</body>
+</html>

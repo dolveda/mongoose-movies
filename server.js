@@ -3,6 +3,7 @@ const express = require('express');
 const logger = require('morgan');
 const indexRoutes = require('./routes/index');
 // ^require index router module
+const movieRoutes = require('./routes/movies');
 
 // initialize express application
 const app = express();
@@ -20,14 +21,29 @@ require('./config/database');
 
 //mount middleware
 app.use(logger('dev'));
-//http logger middleware
+//^http logger middleware
 app.use(express.static('public'));
-//express static middleware - makes static assets available t the client
+//^express static middleware - makes static assets available t the client
+app.use(express.urlencoded({ extended: false }));
+//^this creates req.body from an HTML form submission
+
 
 //mount routes
 app.use('/', indexRoutes);
+app.use('/movies', movieRoutes);
 
 //tell the application to listen for requests
 app.listen(3002, () => {
     console.log('express is listening on port 3002');
 })
+
+
+//Mongoose playground:
+
+//create a document using the new model we defined(just for fun)
+// const Movie = require('./models/movie');
+
+// Movie.create({title: 'Star Wars', releaseYear: 1977})
+// .then(function(newMovie) {
+//     console.log(newMovie);
+// })
