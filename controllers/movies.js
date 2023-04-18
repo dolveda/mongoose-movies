@@ -36,7 +36,7 @@ async function create(req, res) {
 async function index(req, res) {
 
     try{
-        const sllMovies = await Movie.find({})
+        const allMovies = await Movie.find({})
         
             res.render('movies/index', { 
                 movies: allMovies, 
