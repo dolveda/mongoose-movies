@@ -7,41 +7,65 @@ function newMovie(req,res) {
     });
 };
 
-function create(req, res) {
-    req.body.nowShowing = !!req.body.nowShowing;//type coercion - convert string type iinto a boolean
-    //remove all space chars before or after commas
-    // req.body.cast = req.body.replace(/\s*,\s*/, '');
-    req.body.cast = req.body.cast.trim();// remove space chars at beginning or ending  of string
-    req.body.cast = req.body.cast.split(/\s*,\s*/);//split comma separated names into array
+async function create(req, res) {
+    try{
+        req.body.nowShowing = !!req.body.nowShowing;//type coercion - convert string type iinto a boolean
+        //check req.body for missing fields
+        for(let key in req.body) {
+            // if a field is missing, we'll delete it from req.body
+            if(req.body[key] === '') delete req.body[key];
+        };
+        
+        //remove all space chars before or after commas
+        // req.body.cast = req.body.replace(/\s*,\s*/, '');
+        if(req.body.cast) {
+            req.body.cast = req.body.cast.trim();// remove space chars at beginning or ending  of string
+            req.body.cast = req.body.cast.split(/\s*,\s*/);//split comma separated names into array
+        }
 
-    Movie.create(req.body).then(function(newMovie) {
-        console.log(newMovie);
-        res.send(newMovie);
-    }).catch(function(err) {
-        console.log(err);
-        res.send('error');
-    })
+        await Movie.create(req.body);
+
+        res.redirect('/movies');
+    }  catch (error) {
+        //during development mode; console.log the error
+        console.log(error);
+        res.render('error', {title: 'Something Went Wrong'});
+    }
 }
 
-function index(req, res) {
-    Movie.find({}).then(function(allMovies) {
-        res.render('movies/index', { 
-            movies: allMovies, 
-            title: 'All Movies' 
-        });
-    });
-}
+async function index(req, res) {
 
-function show(req, res) {
+    try{
+        const sllMovies = await Movie.find({})
+        
+            res.render('movies/index', { 
+                movies: allMovies, 
+                title: 'All Movies' 
+            });
+
+    }  catch (error) {
+        //during development mode; console.log the error
+        console.log(error);
+        res.render('error', {title: 'Something Went Wrong'});
+    }
+    
+};
+
+
+async function show(req, res) {
     // find one mvie in the database bases on it's ID
-    Movie.findById(req.params.id).then(function(foundMovie) {
-        // render a template with that movie object
+    try {
+        const foundMovie = await Movie.findById(req.params.id)
         res.render('movies/show', { 
             movie: foundMovie,
             title: 'See Movie Details' 
         });
-    });
-}
+    }  catch (error) {
+        //during development mode; console.log the error
+        console.log(error);
+        res.render('error', {title: 'Something Went Wrong'});
+    }
+ }
 
 module.exports = {
     new: newMovie,
