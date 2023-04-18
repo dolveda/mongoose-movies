@@ -32,6 +32,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/', indexRoutes);
 app.use('/movies', movieRoutes);
 
+// "fallback" or "catch all" route for serving a 404 page
+// We'll send this page if the user/or developer sends a request to a route that doesn't exist
+app.use('*', (req, res) => {
+    res.render('404', {title: '404 - Page Not Found'})
+});
+
 //tell the application to listen for requests
 app.listen(3002, () => {
     console.log('express is listening on port 3002');
